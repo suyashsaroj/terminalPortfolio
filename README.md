@@ -34,12 +34,12 @@ Simply open the `index.html` file in a web browser, and you'll be transported to
 
 ## Author
 
-👤 Your Name
+👤 suyash
 
 ## Connect with Me
 
 - Email: suyashsaroj76@gmail.com
-- Portfolio: [[Your Portfolio Link]](https://my-website-fecaf.firebaseapp.com/)
+- Portfolio: (https://my-website-fecaf.firebaseapp.com/)
 
 Feel free to reach out for collaboration or just to chat about the latest tech trends!
 

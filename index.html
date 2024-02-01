@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terminal Portfolio</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap"
+    />
+    <style>
+      body {
+        background-color: #000;
+        color: #00ff00;
+        font-family: "Consolas", monospace;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      #glitch-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        overflow: hidden; /* Add overflow: hidden */
+      }
+
+      .glitch {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkAAIAAAIAA/2LjAAAAABJRU5ErkJggg==");
+        animation: glitch-animation 0.3s infinite linear alternate-reverse;
+        z-index: 2;
+      }
+
+      .flashing-message {
+        animation: flash-animation 0.5s infinite alternate;
+      }
+
+      @keyframes flash-animation {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+      @keyframes glitch-animation {
+        0%,
+        100% {
+          clip-path: inset(0 0 0 0);
+          transform: skew(0deg);
+        }
+        2%,
+        98% {
+          clip-path: inset(3% 0 3% 0);
+          transform: skew(5deg);
+        }
+        4%,
+        96% {
+          clip-path: inset(2% 0 2% 0);
+          transform: skew(-5deg);
+        }
+        6%,
+        94% {
+          clip-path: inset(5% 0 5% 0);
+          transform: skew(2deg);
+        }
+        8%,
+        92% {
+          clip-path: inset(4% 0 4% 0);
+          transform: skew(-2deg);
+        }
+        10%,
+        90% {
+          clip-path: inset(0 0 0 0);
+          transform: skew(0deg);
+        }
+      }
+
+      #terminal {
+        width: 100%; /* Set width to 100% for infinite width */
+        min-height: 300px;
+        max-height: 600px;
+        overflow: auto;
+        background-color: #000;
+        image-rendering: pixelated;
+        overflow-y: hidden;
+        word-wrap: break-word;
+        border: none; /* Remove the border */
+        padding: 10px; /* Retro padding */
+        box-sizing: border-box;
+      }
+
+      #input-container {
+        display: flex;
+        margin-top: 5px;
+        /* Added position:relative */
+      }
+
+      #input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        color: #00ff00;
+        padding: 5px;
+        outline: none;
+        z-index: 1; /* Set a higher z-index */
+      }
+      #typed-intro {
+        color: #00ff00;
+        font-size: 14px;
+        margin-bottom: 20px;
+        max-width: 1000px;
+      }
+      #ascii-art {
+        color: #00ff00;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      #input:focus {
+        outline: none;
+      }
+
+      #outputs {
+        margin-top: 10px;
+        margin-right: 10px;
+        font-size: 16px;
+      }
+
+      #linux-commands {
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
+      #linux-commands h2 {
+        color: #00ff00;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      #linux-commands ul {
+        list-style-type: none;
+        padding: 0;
+        font-size: 14px;
+      }
+
+      #linux-commands li {
+        margin-bottom: 5px;
+      }
+
+      span {
+        color: #00ff00;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div id="outputs">Welcome to My Retro Portfolio!!</div>
+      <p id="typed-intro"></p>
+      <div class="flashing-message">Type: "--help"</div>
+      <div id="terminal">
+        <div id="output"></div>
+        <div id="input-container">
+          <span>&gt;</span>
+          <input type="text" id="input" autofocus />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const terminal = document.getElementById("terminal");
+      const input = document.getElementById("input");
+      const output = document.getElementById("output");
+      let currentDirectory = "/";
+
+      function showFlashingMessage(message) {
+        output.innerHTML = `<div class="flashing-message">${message}</div>`;
+        setTimeout(() => {
+          output.innerHTML = ""; // Clear the flashing message after a timeout
+        }, 5000); // Adjust the timeout as needed
+      }
+      input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          processCommand(input.value);
+          input.value = "";
+        }
+      });
+
+      function processCommand(command) {
+        const response = executeCommand(command);
+        output.innerHTML += `<div>&gt; ${command}</div>`;
+        output.innerHTML += `<div>${response}</div>`;
+        terminal.scrollTo({
+          top: "0px",
+          behavior: "smooth",
+        });
+      }
+
+      function executeCommand(command) {
+        const args = command.split(" ");
+        const commandName = args[0].toLowerCase();
+
+        switch (commandName) {
+          case "--help":
+            return (
+              "Available commands:</br>" +
+              "  --help: Show available commands</br>" +
+              "  about: Display information about the developer</br>" +
+              "  skills: List the developer's skills</br>" +
+              "  projects: Display information about the developer's projects</br>" +
+              "  contact: Show contact information</br>" +
+              "  ls: List directory contents</br>" +
+              "  cd [directory]: Change directory</br>" +
+              "  pwd: Print working directory</br>" +
+              "  mkdir [directory]: Create a new directory</br>" +
+              "  touch [filename]: Create a new file</br>" +
+              "  restart: Simulate system restart</br>"
+            );
+          case "about":
+            return "I am a passionate developer with a strong background in web development.";
+          case "skills":
+            return "My skills include HTML, CSS, JavaScript, and more.";
+          case "projects":
+            return "No projects found.";
+          case "contact":
+            return "You can reach me at suyashsaroj76@gmail.com.";
+          case "ls":
+            return listDirectoryContents();
+          case "cd":
+            return changeDirectory(args[1]);
+          case "pwd":
+            return printWorkingDirectory();
+          case "mkdir":
+            return makeDirectory(args[1]);
+          case "touch":
+            return createFile(args[1]);
+          case "restart":
+            return simulateRestart();
+          default:
+            return `Command not recognized: ${command}`;
+        }
+      }
+
+      // Sample data for simulation
+      const fileSystem = {
+        "/": {
+          type: "directory",
+          contents: {
+            "file1.txt": { type: "file" },
+            "file2.txt": { type: "file" },
+            directory1: {
+              type: "directory",
+              contents: {
+                "file3.txt": { type: "file" },
+                "file4.txt": { type: "file" },
+              },
+            },
+          },
+        },
+      };
+
+      // Simulate ls command
+      function listDirectoryContents(directory = "/") {
+        const contents = fileSystem[directory]?.contents;
+        if (contents) {
+          return Object.keys(contents).join(" ");
+        } else {
+          return `ls: cannot access '${directory}': No such file or directory`;
+        }
+      }
+
+      function changeDirectory(targetDirectory) {
+        if (!targetDirectory) {
+          return "cd: missing argument";
+        }
+
+        const newPath =
+          targetDirectory === ".."
+            ? currentDirectory.substring(0, currentDirectory.lastIndexOf("/"))
+            : `${currentDirectory}/${targetDirectory}`;
+
+        if (fileSystem[newPath]?.type === "directory") {
+          currentDirectory = newPath;
+          return "";
+        } else {
+          return `cd: ${targetDirectory}: No such file or directory`;
+        }
+      }
+
+      // Simulate pwd command
+      function printWorkingDirectory() {
+        return directory;
+      }
+
+      // Simulate mkdir command
+      function makeDirectory(newDirectoryName) {
+        if (!newDirectoryName) {
+          return "mkdir: missing operand";
+        }
+
+        const newDirectoryPath = `${directory}/${newDirectoryName}`;
+
+        if (!fileSystem[newDirectoryPath]) {
+          fileSystem[newDirectoryPath] = { type: "directory", contents: {} };
+          return "";
+        } else {
+          return `mkdir: cannot create directory '${newDirectoryName}': File exists`;
+        }
+      }
+
+      // Simulate touch command
+      function createFile(newFileName) {
+        if (!newFileName) {
+          return "touch: missing file operand";
+        }
+
+        const newFilePath = `${directory}/${newFileName}`;
+
+        if (!fileSystem[newFilePath]) {
+          fileSystem[newFilePath] = { type: "file" };
+          return "";
+        } else {
+          return `touch: cannot touch '${newFileName}': File exists`;
+        }
+      }
+
+      // Example usage
+      let directory = "/";
+      function simulateRestart() {
+        const restartMessage = "System Restarting";
+        const dots = ["", ".", "..", "..."];
+        let index = 0;
+        let startTime = Date.now();
+
+        function updateRestartMessage() {
+          const elapsedTime = Date.now() - startTime;
+
+          if (elapsedTime < 2000) {
+            // Limit restart to 2 seconds
+            output.innerHTML = `<div>${restartMessage}${dots[index]}</div>`;
+            index = (index + 1) % dots.length;
+          } else {
+            clearInterval(restartInterval);
+            showASCIIArt();
+          }
+        }
+
+        function showASCIIArt() {
+          output.innerHTML = `<div id="ascii-art" style="white-space: pre;">`;
+          outputs.innerHTML = `<div id="ascii-art" style="white-space: pre;">
+
+            <div id="glitch-container">
+        <div class="glitch"></div>
+      </div>
+      ░██████╗██╗░░░██╗██╗░░░██╗░█████╗░░██████╗██╗░░██╗  ░██████╗░█████╗░██████╗░░█████╗░░░░░░██╗
+      ██╔════╝██║░░░██║╚██╗░██╔╝██╔══██╗██╔════╝██║░░██║  ██╔════╝██╔══██╗██╔══██╗██╔══██╗░░░░░██║
+      ╚█████╗░██║░░░██║░╚████╔╝░███████║╚█████╗░███████║  ╚█████╗░███████║██████╔╝██║░░██║░░░░░██║
+      ░╚═══██╗██║░░░██║░░╚██╔╝░░██╔══██║░╚═══██╗██╔══██║  ░╚═══██╗██╔══██║██╔══██╗██║░░██║██╗░░██║
+      ██████╔╝╚██████╔╝░░░██║░░░██║░░██║██████╔╝██║░░██║  ██████╔╝██║░░██║██║░░██║╚█████╔╝╚█████╔╝
+      ╚═════╝░░╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝  ╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░░╚════╝░
+          </div>
+      Welcome to My Retro Portfolio!
+      `;
+
+          // Additional actions after restart (if needed)
+        }
+
+        const restartInterval = setInterval(updateRestartMessage, 1000); // Update every 500 milliseconds
+        return "system restarting...";
+      }
+
+      simulateRestart();
+
+      const introText = `I'm a passionate web developer who loves crafting digital experiences. 
+        My skills include HTML, CSS, JavaScript, and more. 
+        With a focus on clean code and creative solutions, 
+        I bring ideas to life through coding magic. 
+        Explore my projects below and get a glimpse of what I love to create. 
+        From sleek websites to interactive web applications, 
+        I enjoy pushing the boundaries of web development. 
+        Feel free to reach out if you have a project idea, want to collaborate, 
+        or just chat about the latest tech trends. Let's build something amazing together!`;
+      const typedIntro = document.getElementById("typed-intro");
+      let charIndex = 0;
+
+      function typeIntro() {
+        if (charIndex < introText.length) {
+          typedIntro.innerHTML += introText.charAt(charIndex);
+          charIndex++;
+          setTimeout(typeIntro, 10); // Adjust the typing speed (milliseconds per character)
+        }
+      }
+      
+
+      setTimeout(typeIntro, 2000); // Start typing after a brief delay
+      showFlashingMessage("File System Commands\n    --help");
+    </script>
+  </body>
+</html>

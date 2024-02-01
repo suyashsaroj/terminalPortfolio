@@ -45,5 +45,5 @@ Feel free to reach out for collaboration or just to chat about the latest tech t
 
 ---
 
-**Note:** This project is a fun and creative way to showcase web development skills in a unique and engaging manner. Inspired by the retro era, it aims to provide a memorable user experience. Explore, have fun, and let's build something amazing together! 🌟
+**Note:** This project is a fun and creative way to showcase web development skills in a unique and engaging manner. Inspired by the retro era, it aims to provide a memorable user experience. Explore, have fun. 🌟
 
